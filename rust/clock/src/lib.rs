@@ -23,7 +23,12 @@ impl Clock {
     }
 
     pub fn add_minutes(&self, minutes: i32) -> Self {
-        todo!("Add {minutes} minutes to existing Clock time");
+        let (adjusted_minutes, calculated_hours) = Self::adjust_minutes(self.minutes + minutes);
+        let adjusted_hours = Self::adjust_hours(self.hours + calculated_hours);
+        Clock {
+            hours: adjusted_hours,
+            minutes: adjusted_minutes,
+        }
     }
 
     fn adjust_minutes(raw_minutes: i32) -> (i32, i32) {
@@ -43,7 +48,8 @@ impl Clock {
         let adjusted_hours = if raw_hours >= 0 { 
             raw_hours % HOURS_PER_DAY
         } else {
-            raw_hours + (raw_hours.abs() / HOURS_PER_DAY + 1) * HOURS_PER_DAY
+            let round_up = if raw_hours.abs() % HOURS_PER_DAY != 0 {1} else {0};
+            raw_hours + (raw_hours.abs() / HOURS_PER_DAY + round_up) * HOURS_PER_DAY
         };
 
         adjusted_hours
