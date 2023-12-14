@@ -14,11 +14,7 @@ impl Clock {
     pub fn new(hours: i32, minutes: i32) -> Self {
         let (adjusted_minutes, calculated_hours) = Self::adjust_minutes(minutes);
 
-        let adjusted_hours = if (hours + calculated_hours) >= 0 { 
-            (hours + calculated_hours) % HOURS_PER_DAY
-        } else {
-            (hours + calculated_hours) + ((hours + calculated_hours).abs() / HOURS_PER_DAY + 1) * HOURS_PER_DAY
-        };
+        let adjusted_hours = Self::adjust_hours(hours + calculated_hours);
 
         Clock { 
             hours: adjusted_hours, 
@@ -41,6 +37,16 @@ impl Clock {
             )
         };
         (adjusted_minutes, calculated_hours)
+    }
+
+    fn adjust_hours(raw_hours: i32) -> i32 {
+        let adjusted_hours = if raw_hours >= 0 { 
+            raw_hours % HOURS_PER_DAY
+        } else {
+            raw_hours + (raw_hours.abs() / HOURS_PER_DAY + 1) * HOURS_PER_DAY
+        };
+
+        adjusted_hours
     }
 }
 
