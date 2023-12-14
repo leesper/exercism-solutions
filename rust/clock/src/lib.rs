@@ -12,20 +12,12 @@ const MINUTES_PER_HOUR: i32 = 60;
 
 impl Clock {
     pub fn new(hours: i32, minutes: i32) -> Self {
-        let (adjusted_minutes, added_hours) = if minutes >= 0 {
-            (minutes % MINUTES_PER_HOUR, minutes / MINUTES_PER_HOUR)
-        } else {
-            let round_up = if minutes.abs() % MINUTES_PER_HOUR != 0 {1} else {0};
-            (
-                minutes + (minutes.abs() / MINUTES_PER_HOUR + round_up) * MINUTES_PER_HOUR, 
-                -(minutes.abs() / MINUTES_PER_HOUR + round_up)
-            )
-        };
+        let (adjusted_minutes, calculated_hours) = Self::adjust_minutes(minutes);
 
-        let adjusted_hours = if (hours + added_hours) >= 0 { 
-            (hours + added_hours) % HOURS_PER_DAY
+        let adjusted_hours = if (hours + calculated_hours) >= 0 { 
+            (hours + calculated_hours) % HOURS_PER_DAY
         } else {
-            (hours + added_hours) + ((hours + added_hours).abs() / HOURS_PER_DAY + 1) * HOURS_PER_DAY
+            (hours + calculated_hours) + ((hours + calculated_hours).abs() / HOURS_PER_DAY + 1) * HOURS_PER_DAY
         };
 
         Clock { 
@@ -36,6 +28,19 @@ impl Clock {
 
     pub fn add_minutes(&self, minutes: i32) -> Self {
         todo!("Add {minutes} minutes to existing Clock time");
+    }
+
+    fn adjust_minutes(raw_minutes: i32) -> (i32, i32) {
+        let (adjusted_minutes, calculated_hours) = if raw_minutes >= 0 {
+            (raw_minutes % MINUTES_PER_HOUR, raw_minutes / MINUTES_PER_HOUR)
+        } else {
+            let round_up = if raw_minutes.abs() % MINUTES_PER_HOUR != 0 {1} else {0};
+            (
+                raw_minutes + (raw_minutes.abs() / MINUTES_PER_HOUR + round_up) * MINUTES_PER_HOUR, 
+                -(raw_minutes.abs() / MINUTES_PER_HOUR + round_up)
+            )
+        };
+        (adjusted_minutes, calculated_hours)
     }
 }
 
